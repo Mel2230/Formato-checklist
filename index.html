@@ -811,17 +811,21 @@
             return {x, y};
         }
 
-        function disableScroll(){
+        function disbleScrollGlobal(){
             document.body.style.overflow ='hidden';
+            document.body.style.top = `-${window.scrollY}px`;
         }
 
-        function enableScroll(){
-            document.body.style.overflow ='auto';
+        function enableScrollGlobal(){
+            const scrollY = document.body.style.top;
+            document.body.style.position = '';
+            document.body.style.top = '';
+            window.scrollTo(0, parseInt(scrollY ||'0')*-1);
         }
         
         canvas.addEventListener('pointerdown', (e) => {
             e.preventDefault();
-            disableScroll(); //bloquea scroll al empezar
+            disbleScrollGlobal(); //bloquea scroll al empezar
             const p = pointerPos(e);
             drawing = true;
             lastX = p.x; lastY = p.y;
@@ -837,8 +841,8 @@
             lastX = p.x; lastY = p.y;
         }, {passive:false});
         
-        window.addEventListener('pointerup', () => { drawing= false; enableScroll();})
-        window.addEventListener('pointercancel', () => {drawing=false;enableScroll();})
+        window.addEventListener('pointerup', () => { drawing= false; enableScrollGlobal();})
+        window.addEventListener('pointercancel', () => {drawing=false;enableScrollGlobal();})
         return ctx;
     }
     
