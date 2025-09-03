@@ -803,7 +803,7 @@
 
         let drawing = false;
         let lastX = 0, lastY = 0;
-        let scrollYBefore = 0;
+        let savedScrollY = 0;
         
         function pointerPos(e) {
             const rect = canvas.getBoundingClientRect();
@@ -815,14 +815,14 @@
         function disableScrollGlobal(){
             scrollYBefore = window.scrollY;
             document.body.style.position ='fixed';
-            document.body.style.top = `-${scrollYBefore}px`;
+            document.body.style.top = `-${savedScrollY}px`;
             document.body.style.left = '0';
             document.body.style.right = '0';
-            document.body.style.overflow = 'hidden';
+            //document.body.style.overflow = 'hidden';
 
             //bloquea gestos de deslplazamiento y zoom
-            document.addEventListener("touchmove", preventDefault,{ passive: false});
-            document.addEventListener("gesturestart", preventDefault,{ passive:false});
+           //document.addEventListener("touchmove", preventDefault,{ passive: false});
+            //document.addEventListener("gesturestart", preventDefault,{ passive:false});
 
         }
 
@@ -834,15 +834,15 @@
             document.body.style.overflow = '';
 
             //Restaurar scroll origial
-            window.scrollTo(0, scrollYBefore);
+            window.scrollTo(0, savedScrollY);
 
             // quita bloqueos tactiles 
-            document.removeEventListener("touchmove", preventDefault);
-            document.removeEventListener("gesturestart", preventDefault);
+            //document.removeEventListener("touchmove", preventDefault);
+            //document.removeEventListener("gesturestart", preventDefault);
 
         }
 
-        function preventDefault(e) { e.preventDefault() }
+        //function preventDefault(e) { e.preventDefault() }
 
         // eventos de la firma
         canvas.addEventListener('pointerdown', (e) => {
