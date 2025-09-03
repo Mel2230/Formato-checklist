@@ -803,7 +803,7 @@
 
         let drawing = false;
         let lastX = 0, lastY = 0;
-        let savedScrollY = 0;
+        let savedScrollY = 1;
         
         function pointerPos(e) {
             const rect = canvas.getBoundingClientRect();
@@ -812,21 +812,30 @@
             return {x, y};
         }
 
-        function disableScrollGlobal(){
+        function preventScroll(e) {e.preventDefault();}
+        function disableTouchGestures(){
+            document.addEventListener("touchmove", preventScroll, {passive: false});
+        }
+        function enableTouchGestures(){
+            document.removeEventListener("touchmove", preventScroll);
+        }
+
+
+        /*function disableScrollGlobal(){
             scrollYBefore = window.scrollY;
             document.body.style.position ='fixed';
             document.body.style.top = `-${savedScrollY}px`;
             document.body.style.left = '0';
             document.body.style.right = '0';
-            //document.body.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
 
             //bloquea gestos de deslplazamiento y zoom
-           //document.addEventListener("touchmove", preventDefault,{ passive: false});
-            //document.addEventListener("gesturestart", preventDefault,{ passive:false});
+            document.addEventListener("touchmove", preventDefault,{ passive: false});
+            document.addEventListener("gesturestart", preventDefault,{ passive:false});
 
-        }
+        }*/
 
-        function enableScrollGlobal(){
+        /*function enableScrollGlobal(){
             document.body.style.position = '';
             document.body.style.top = '';
             document.body.style.left = '';
@@ -834,20 +843,20 @@
             document.body.style.overflow = '';
 
             //Restaurar scroll origial
-            window.scrollTo(0, savedScrollY);
+            //window.scrollTo(0, savedScrollY);
 
             // quita bloqueos tactiles 
-            //document.removeEventListener("touchmove", preventDefault);
-            //document.removeEventListener("gesturestart", preventDefault);
+            document.removeEventListener("touchmove", preventDefault);
+            document.removeEventListener("gesturestart", preventDefault);
 
-        }
+        }*/
 
         //function preventDefault(e) { e.preventDefault() }
 
         // eventos de la firma
         canvas.addEventListener('pointerdown', (e) => {
             e.preventDefault();
-            disableScrollGlobal(); //bloquea 
+            disableTouchGestures(); //bloquea 
             const p = pointerPos(e);
             drawing = true;
             lastX = p.x; lastY = p.y;
@@ -863,8 +872,8 @@
             lastX = p.x; lastY = p.y;
         }, {passive:false});
         
-        window.addEventListener('pointerup', () => { drawing= false; enableScrollGlobal();})
-        window.addEventListener('pointercancel', () => {drawing=false;enableScrollGlobal();})
+        window.addEventListener('pointerup', () => { drawing= false; enableTouchGestures();});
+        window.addEventListener('pointercancel', () => {drawing=false;enableTouchGestures();});
         return ctx;
     }
     
