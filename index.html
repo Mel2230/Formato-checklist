@@ -803,6 +803,7 @@
 
         let drawing = false;
         let lastX = 0, lastY = 0;
+        let scrollYBefore = 0;
         
         function pointerPos(e) {
             const rect = canvas.getBoundingClientRect();
@@ -811,21 +812,42 @@
             return {x, y};
         }
 
-        function disbleScrollGlobal(){
-            document.body.style.overflow ='hidden';
-            document.body.style.top = `-${window.scrollY}px`;
+        function disableScrollGlobal(){
+            scrollYBefore = window.scrollY;
+            document.body.style.position ='fixed';
+            document.body.style.top = `-${scrollYBefore}px`;
+            document.body.style.left = '0';
+            document.body.style.right = '0';
+            document.body.style.overflow = 'hidden';
+
+            //bloquea gestos de deslplazamiento y zoom
+            document.addEventListener("touchmove", preventDefault,{ passive: false});
+            document.addEventListener("gesturestart", preventDefault,{ passive:false});
+
         }
 
         function enableScrollGlobal(){
-            const scrollY = document.body.style.top;
             document.body.style.position = '';
             document.body.style.top = '';
-            window.scrollTo(0, parseInt(scrollY ||'0')*-1);
+            document.body.style.left = '';
+            document.body.style.right = '';
+            document.body.style.overflow = '';
+
+            //Restaurar scroll origial
+            window.scrollTo(0, scrollYBefore);
+
+            // quita bloqueos tactiles 
+            document.removeEventListener("touchmove", preventDefault);
+            document.removeEventListener("gesturestart", preventDefault);
+
         }
-        
+
+        function preventDefault(e) { e.preventDefault() }
+
+        // eventos de la firma
         canvas.addEventListener('pointerdown', (e) => {
             e.preventDefault();
-            disbleScrollGlobal(); //bloquea scroll al empezar
+            disableScrollGlobal(); //bloquea 
             const p = pointerPos(e);
             drawing = true;
             lastX = p.x; lastY = p.y;
